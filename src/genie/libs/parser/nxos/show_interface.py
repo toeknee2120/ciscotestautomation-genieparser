@@ -3133,6 +3133,9 @@ class ShowRunningConfigInterfaceSchema(MetaParser):
                         Optional('ip_address_secondary'): str,
                         Optional('vrf_member'): str,
                         Optional('fabric_forwarding_mode'): str,
+                        Optional('ip_unreachables'): bool,
+                        Optional('ip_pim_sparse_mode'): bool,
+                        Optional('isis_circuit_type'): str,
                         }
                    },
               }
@@ -3246,7 +3249,16 @@ class ShowRunningConfigInterface(ShowRunningConfigInterfaceSchema):
 
         # ip address 10.2.1.1/30 secondary
         p21 = re.compile(r'^ip address +(?P<ip_address_secondary>[0-9\./]+) secondary$')
-
+        
+        # ip unreachables
+        p22 = re.compile(r'^ip unreachables$')
+        
+        # ip pim sparse-mode
+        p23 = re.compile(r'^ip pim sparse-mode$')
+        
+        # isis circuit-type level-1
+        p24 = re.compile(r'^isis circuit-type (?P<isis_circuit_type>level-[0-9])$') 
+       
         for line in out.splitlines():
             line = line.strip()
 
@@ -3406,6 +3418,26 @@ class ShowRunningConfigInterface(ShowRunningConfigInterfaceSchema):
                 interface_dict.update({'ip_address_secondary': group['ip_address_secondary']})
                 continue
 
+            # ip unreachables
+            m = p22.match(line)
+            if m:
+                interface_dict['ip_unreachables'] = True
+                continue
+                
+            # ip pim sparse-mode
+            m = p23.match(line)
+            if m:
+                interface_dict['ip_pim_sparse_mode'] = True
+                continue
+                
+            # isis circuit-type level-1
+            m = p24.match(line)
+            if m:
+                group = m.groupdict()
+                interface_dict['isis_circuit_type'] = group['isis_circuit_type']
+                continue       
+
+       
         return ret_dict
 
 
