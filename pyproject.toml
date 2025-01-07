@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "ciscotestautomation-genieparser"
+version = "0.1.0"
+description = ""
+authors = ["tony <tony@laptop>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyats = {extras = ["full"], version = "^24.10"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
